@@ -5,15 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OneGuyStudio - Pro Simulation</title>
     
+    <!-- GSAP Libraries for Animation -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
 
     <style>
+        /* Import Retro/Coding Fonts */
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Permanent+Marker&family=Montserrat:wght@700;900&display=swap');
 
-        /* --- Global Reset & Scene --- */
+        /* --- Global Reset & Scene Setup --- */
         body {
             background-color: #050505;
             color: white;
@@ -26,10 +28,11 @@
             align-items: center;
             margin: 0;
             user-select: none;
-            touch-action: none;
+            touch-action: none; /* Disables scrolling on mobile touches */
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* The Main Stage (Scaled dynamically) */
         #scene-container {
             width: 1000px;
             height: 650px;
@@ -39,27 +42,49 @@
             will-change: transform;
         }
 
-        /* --- Rotate Device Message --- */
+        /* --- Mobile Rotate Message (Portrait Only) --- */
         #rotate-message {
-            display: none; position: fixed; inset: 0; background: #0f172a; z-index: 9999;
-            flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #0f172a;
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
         }
         #rotate-message svg { width: 64px; height: 64px; fill: #38bdf8; margin-bottom: 20px; animation: rotatePhone 2s infinite; }
         #rotate-message h2 { font-size: 1.5rem; color: #fff; margin-bottom: 10px; }
-        #rotate-message p { color: #94a3b8; font-family: 'Fira Code', monospace; font-size: 0.9rem; }
-        @keyframes rotatePhone { 0%, 10% { transform: rotate(0deg); } 40%, 60% { transform: rotate(90deg); } 90%, 100% { transform: rotate(0deg); } }
-        @media (max-width: 900px) and (orientation: portrait) { #rotate-message { display: flex; } #scene-container { display: none; } }
+        #rotate-message p { color: #94a3b8; font-family: 'Fira Code', monospace; font-size: 0.9rem; direction: rtl; }
+
+        @keyframes rotatePhone {
+            0%, 10% { transform: rotate(0deg); }
+            40%, 60% { transform: rotate(90deg); }
+            90%, 100% { transform: rotate(0deg); }
+        }
+
+        /* Trigger for Mobile Portrait */
+        @media (max-width: 900px) and (orientation: portrait) {
+            #rotate-message { display: flex; }
+            #scene-container { display: none; } 
+        }
 
         /* --- Lighting Layer --- */
         #darkness-layer {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute;
+            top: 0; left: 0; 
+            width: 100%; height: 100%;
             background: radial-gradient(circle 350px at var(--x, 50%) var(--y, 50%), transparent 0%, rgba(5, 5, 8, 0.98) 100%);
-            z-index: 100; pointer-events: none; transition: opacity 1.5s ease-in-out;
+            z-index: 100; 
+            pointer-events: none;
+            transition: opacity 1.5s ease-in-out;
         }
         body.lights-on { background: #1e293b; } 
         body.lights-on #darkness-layer { opacity: 0; }
 
-        /* --- Wall Layer (Fades in Dark) --- */
+        /* --- Wall Layer (Fades in/out) --- */
         #wall-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1; opacity: 0.15; transition: opacity 1s;
@@ -81,7 +106,7 @@
         .min-hand { width: 2px; height: 35px; bottom: 50%; background: #cbd5e1; }
         .sec-hand { width: 1px; height: 40px; bottom: 50%; background: #ef4444; }
 
-        /* General Frame Style */
+        /* --- Frame Styles --- */
         .wall-frame {
             width: 100px; height: 100px; 
             border: 2px solid #334155; 
@@ -93,23 +118,22 @@
             text-decoration: none;
             pointer-events: none; /* Disabled in dark */
         }
-        
         .wall-frame svg { width: 40px; height: 40px; stroke: #64748b; transition: 0.3s; fill: none; }
         .wall-frame span { font-size: 0.7rem; color: #64748b; margin-top: 5px; font-weight: 600; transition: 0.3s; }
-
-        /* CRITICAL: Force fill for solid icons to be visible grey by default */
+        
+        /* Fix for filled icons (Discord/GitHub) to appear Grey initially */
         .wall-frame .filled-icon { stroke: none !important; fill: #64748b !important; transition: 0.3s; }
 
-        /* Enable interaction in light */
+        /* Interaction enabled when lights on */
         body.lights-on .wall-frame { pointer-events: auto; background: rgba(30, 41, 59, 1); }
 
-        /* Right Frames Hover */
+        /* Right Frames (Apps/Games) */
         .frames-group { position: absolute; top: 180px; right: 100px; display: flex; gap: 20px; }
         body.lights-on .frames-group .wall-frame:hover { transform: translateY(-5px); border-color: #38bdf8; }
         body.lights-on .frames-group .wall-frame:hover svg { stroke: #38bdf8; }
         body.lights-on .frames-group .wall-frame:hover span { color: #38bdf8; }
 
-        /* Left Frames Hover */
+        /* Left Frames (Community) */
         .left-frames { position: absolute; top: 180px; left: 50px; display: flex; flex-direction: row; gap: 20px; }
 
         /* Discord Colors */
@@ -122,9 +146,35 @@
         body.lights-on .github-frame:hover .filled-icon { fill: #ffffff !important; }
         body.lights-on .github-frame:hover span { color: #ffffff; }
 
-        .copyright { position: absolute; bottom: 20px; width: 100%; text-align: center; font-family: 'Fira Code', monospace; font-size: 0.8rem; color: #475569; letter-spacing: 1px; }
+        .copyright { position: absolute; bottom: 20px; width: 100%; text-align: center; font-family: 'Fira Code', monospace; font-size: 0.8rem; color: #475569; letter-spacing: 1px; pointer-events: none; }
 
-        /* --- Ceiling Rig --- */
+        /* --- Structure & Furniture --- */
+        .floor { position: absolute; bottom: 80px; width: 100%; height: 2px; background: #94a3b8; z-index: 5; opacity: 0.5; }
+        .side-wall { position: absolute; top: 0; bottom: 80px; width: 40px; background: #0f172a; z-index: 10; border-right: 1px solid #334155; }
+        .wall-left { left: 0; border-right: 2px solid #334155; }
+        .wall-right { right: 0; border-left: 2px solid #334155; border-right: none; }
+
+        /* Desk Area */
+        #workspace { position: absolute; bottom: 82px; right: 260px; width: 80px; height: 200px; z-index: 10; }
+        .desk-leg { position: absolute; bottom: 0; width: 6px; height: 95px; background: #334155; }
+        .leg-left { left: 8px; }
+        .leg-right { right: 8px; }
+        .desk-top { position: absolute; bottom: 95px; left: 0; width: 100%; height: 8px; background: #78350f; border-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 2; }
+        
+        .desk-light-strip { position: absolute; bottom: 93px; left: 10px; width: 60px; height: 2px; background: #0ea5e9; box-shadow: 0 5px 15px 2px rgba(14, 165, 233, 0.8); border-radius: 2px; opacity: 0.6; z-index: 105; transition: opacity 0.5s, box-shadow 0.5s; }
+        body.lights-on .desk-light-strip { opacity: 0.9; box-shadow: 0 5px 25px 4px rgba(56, 189, 248, 0.9); }
+        
+        .keyboard { position: absolute; bottom: 103px; left: 10px; width: 35px; height: 3px; background: #94a3b8; border-radius: 1px; opacity: 0.8; }
+        .monitor-stand { position: absolute; bottom: 103px; right: 15px; width: 10px; height: 18px; background: linear-gradient(to right, #1e293b, #334155); clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); }
+        .monitor { position: absolute; bottom: 118px; right: 8px; width: 6px; height: 75px; background: #0f172a; transform: rotate(-2deg); border-radius: 2px; z-index: 105; }
+        
+        .screen-glow { position: absolute; top: 2px; left: -3px; width: 3px; height: 71px; background: #0ea5e9; transition: 0.5s; box-shadow: -15px 0 30px rgba(14, 165, 233, 0.6); z-index: 106; }
+        body.lights-on .screen-glow { background: #38bdf8; box-shadow: -30px 0 60px rgba(56, 189, 248, 0.9); }
+
+        .monitor-beam { position: absolute; bottom: 125px; right: 220px; width: 140px; height: 140px; background: radial-gradient(circle at left center, rgba(14, 165, 233, 0.3), transparent 70%); transform: rotate(-10deg); z-index: 101; pointer-events: none; opacity: 0.4; filter: blur(8px); transition: opacity 0.8s, background 0.8s; mix-blend-mode: screen; }
+        body.lights-on .monitor-beam { opacity: 0.7; background: radial-gradient(circle at left center, rgba(56, 189, 248, 0.5), transparent 75%); }
+
+        /* --- Ceiling & Rope --- */
         #ceiling-rig { position: absolute; top: -100px; left: 50%; transform: translateX(-50%); z-index: 50; }
         .rig-rod { width: 4px; height: 120px; background: #333; margin: 0 auto; }
         .fan-hub { position: relative; width: 50px; height: 40px; background: #222; margin: -5px auto 0; border-radius: 4px; z-index: 2; display: flex; justify-content: center; align-items: flex-end; }
@@ -141,29 +191,6 @@
         #pull-knob { cursor: grab; fill: #ef4444; stroke: #fff; stroke-width: 2; transition: fill 0.2s; }
         #pull-knob:active { cursor: grabbing; fill: #dc2626; }
 
-        /* --- Furniture --- */
-        .floor { position: absolute; bottom: 80px; width: 100%; height: 2px; background: #94a3b8; z-index: 5; opacity: 0.5; }
-        .side-wall { position: absolute; top: 0; bottom: 80px; width: 40px; background: #0f172a; z-index: 10; border-right: 1px solid #334155; }
-        .wall-left { left: 0; border-right: 2px solid #334155; }
-        .wall-right { right: 0; border-left: 2px solid #334155; border-right: none; }
-
-        /* Compact Desk */
-        #workspace { position: absolute; bottom: 82px; right: 260px; width: 80px; height: 200px; z-index: 10; }
-        .desk-leg { position: absolute; bottom: 0; width: 6px; height: 95px; background: #334155; }
-        .leg-left { left: 8px; }
-        .leg-right { right: 8px; }
-        .desk-top { position: absolute; bottom: 95px; left: 0; width: 100%; height: 8px; background: #78350f; border-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 2; }
-        .desk-light-strip { position: absolute; bottom: 93px; left: 10px; width: 60px; height: 2px; background: #0ea5e9; box-shadow: 0 5px 15px 2px rgba(14, 165, 233, 0.8); border-radius: 2px; opacity: 0.6; z-index: 105; transition: opacity 0.5s, box-shadow 0.5s; }
-        body.lights-on .desk-light-strip { opacity: 0.9; box-shadow: 0 5px 25px 4px rgba(56, 189, 248, 0.9); }
-        .keyboard { position: absolute; bottom: 103px; left: 10px; width: 35px; height: 3px; background: #94a3b8; border-radius: 1px; opacity: 0.8; }
-        .monitor-stand { position: absolute; bottom: 103px; right: 15px; width: 10px; height: 18px; background: linear-gradient(to right, #1e293b, #334155); clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); }
-        .monitor { position: absolute; bottom: 118px; right: 8px; width: 6px; height: 75px; background: #0f172a; transform: rotate(-2deg); border-radius: 2px; z-index: 105; }
-        .screen-glow { position: absolute; top: 2px; left: -3px; width: 3px; height: 71px; background: #0ea5e9; transition: 0.5s; box-shadow: -15px 0 30px rgba(14, 165, 233, 0.6); z-index: 106; }
-        body.lights-on .screen-glow { background: #38bdf8; box-shadow: -30px 0 60px rgba(56, 189, 248, 0.9); }
-
-        .monitor-beam { position: absolute; bottom: 125px; right: 220px; width: 140px; height: 140px; background: radial-gradient(circle at left center, rgba(14, 165, 233, 0.3), transparent 70%); transform: rotate(-10deg); z-index: 101; pointer-events: none; opacity: 0.4; filter: blur(8px); transition: opacity 0.8s, background 0.8s; mix-blend-mode: screen; }
-        body.lights-on .monitor-beam { opacity: 0.7; background: radial-gradient(circle at left center, rgba(56, 189, 248, 0.5), transparent 75%); }
-
         /* Character Rig */
         #char-wrapper { position: absolute; bottom: 82px; right: 220px; width: 240px; height: 240px; z-index: 20; overflow: visible; }
         .zzz-text { font-family: 'Fira Code', monospace; fill: #94a3b8; font-weight: bold; opacity: 0; }
@@ -172,6 +199,7 @@
 </head>
 <body>
 
+    <!-- Mobile Rotate Message -->
     <div id="rotate-message">
         <svg viewBox="0 0 24 24"><path d="M16.48 2.52c3.27 1.55 5.61 4.72 5.97 8.48h1.5C23.44 4.84 18.29 0 12 0l-.66.03l3.81 3.81 1.33-1.32zm-6.25-.77c-.59-.59-1.54-.59-2.12 0L1.75 8.11c-.59.59-.59 1.54 0 2.12l12.02 12.02c.59.59 1.54.59 2.12 0l6.36-6.36c.59-.59.59-1.54 0-2.12L10.23 1.75zm4.6 19.44L2.81 9.17l6.36-6.36l12.02 12.02l-6.36 6.36zm-7.31.29C4.25 19.94 1.91 16.76 1.55 13H.05C.56 19.16 5.71 24 12 24l.66-.03l-3.81-3.81l-1.33 1.32z"/></svg>
         <h2>يرجى تدوير الجهاز</h2>
@@ -186,6 +214,7 @@
         <div class="side-wall wall-right"></div>
         <div class="floor"></div>
 
+        <!-- Wall Layer (Everything inside here fades with light) -->
         <div id="wall-layer">
             <div class="logo-area">
                 <h1 class="studio-logo">ONEGUY</h1>
@@ -271,7 +300,7 @@
                     <stop offset="40%" style="stop-color:#f1f5f9;stop-opacity:1" />
                 </linearGradient>
             </defs>
-
+            
             <g id="pet-zone" transform="translate(20, 195)">
                 <ellipse cx="20" cy="0" rx="25" ry="8" fill="#475569" opacity="0.8" />
                 <g id="cat">
@@ -286,8 +315,8 @@
             <g id="chair">
                 <rect x="50" y="90" width="8" height="55" rx="2" fill="#334155" /> 
                 <rect x="50" y="135" width="55" height="8" rx="2" fill="#475569" /> 
-                <rect x="75" y="143" width="6" height="52" fill="#0f172a" /> 
-                <rect x="60" y="195" width="40" height="5" rx="2" fill="#0f172a" /> 
+                <rect x="75" y="143" width="6" height="52" fill="#0f172a" /> <!-- Darker legs for contrast -->
+                <rect x="60" y="195" width="40" height="5" rx="2" fill="#0f172a" /> <!-- Darker base -->
                 <circle cx="65" cy="203" r="3" fill="#0f172a" />
                 <circle cx="95" cy="203" r="3" fill="#0f172a" />
             </g>
@@ -340,12 +369,15 @@
         let mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
         let lightPos = { x: mouse.x, y: mouse.y };
 
-        // --- INIT ---
+        // --- INIT: Set initial positions strictly via GSAP ---
         gsap.set("#coffee-mug", { x: 130, y: 105, rotation: 0, transformOrigin: "50% 100%" });
+        
+        // Cat Breathing Animation
         gsap.to("#cat", { y: -1, scaleY: 1.05, duration: 2, repeat: -1, yoyo: true, ease: "sine.inOut" });
 
         window.addEventListener("mousemove", e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-        
+        window.addEventListener("orientationchange", () => setTimeout(resize, 100));
+
         gsap.ticker.add(() => {
             if(!isLightsOn) {
                 lightPos.x += (mouse.x - lightPos.x) * 0.1;
@@ -442,15 +474,26 @@
                 }
             });
 
+            // Hand to Handle
             sipTl.to("#arm-front", { attr: { d: "M 68 100 L 95 105 L 142 109" }, duration: 0.5, ease: "power2.out" })
+            
+            // Lift
             .to("#arm-front", { attr: { d: "M 68 100 L 90 90 L 97 79" }, duration: 0.8, ease: "power2.inOut" })
             .to("#coffee-mug", { x: 85, y: 75, rotation: -15, duration: 0.8, ease: "power2.inOut" }, "<")
+            
+            // Head meets cup
             .to("#head-group", { rotation: -5, duration: 0.6, ease: "power2.inOut" }, "-=0.6")
+
+            // Tremble
             .to("#coffee-mug", { x: "+=1", y: "+=1", duration: 0.1, repeat: 5, yoyo: true, ease: "linear" })
             .to("#arm-front", { x: "+=1", y: "+=1", duration: 0.1, repeat: 5, yoyo: true, ease: "linear" }, "<")
+            
+            // Put Back
             .to("#head-group", { rotation: 0, duration: 0.8 })
             .to("#arm-front", { attr: { d: "M 68 100 L 95 105 L 142 109" }, duration: 0.8, ease: "power2.inOut" }, "<")
             .to("#coffee-mug", { x: 130, y: 105, rotation: 0, duration: 0.8, ease: "power2.inOut" }, "<")
+            
+            // Return Arm
             .to("#arm-front", { attr: { d: "M 68 100 L 90 110 L 115 110" }, duration: 0.5 });
         }
 
@@ -473,6 +516,7 @@
 
                 workTl
                     .to("#head-group", { rotation: 0, y: 0, duration: 0.5, ease: "power2.out" }) 
+                    // FIX: Body stays anchored at 70,80 (center of head)
                     .to("#body", { attr: { d: "M 70 80 L 65 135" }, duration: 0.5, ease: "power2.out" }, "<") 
                     .to("#eye-closed", { opacity: 0, duration: 0.1 }, "<")
                     .to("#eye-open", { opacity: 1, duration: 0.1 }, "<")
@@ -483,20 +527,26 @@
 
             } else {
                 document.body.classList.remove("lights-on");
+                
                 clearInterval(coffeeTimer);
                 stopTyping();
                 isSipping = false; 
                 gsap.to(".fan-blade", { scaleX: 1, duration: 1, overwrite: true });
                 gsap.to("#coffee-mug", { x: 130, y: 105, rotation: 0, duration: 0.5 });
+                
+                // Kill Blink
                 gsap.killTweensOf("#eye-open");
                 gsap.killTweensOf(blink);
+
                 if(workTl) workTl.kill();
                 gsap.killTweensOf("#head-group"); gsap.killTweensOf("#body");
 
                 const sleepResetTl = gsap.timeline({ onComplete: () => { isTransitioning = false; sleepTl.restart(); }});
                 sleepResetTl
+                    // Sleep: Head rotates, body stays anchored at M 70 80
                     .to("#head-group", { x: 0, y: 0, rotation: 5, duration: 0.8, ease: "power2.inOut" })
                     .to("#body", { attr: { d: "M 70 80 L 65 135" }, duration: 0.8, ease: "power2.inOut" }, "<") 
+                    
                     .to("#arm-front", { attr: { d: "M 68 100 L 85 120 L 100 120" }, y: 0, duration: 0.8 }, "<")
                     .to("#arm-back", { attr: { d: "M 68 100 L 80 120 L 90 120" }, y: 0, duration: 0.8 }, "<")
                     .to("#eye-open", { opacity: 0, duration: 0.1 }, "-=0.4")
