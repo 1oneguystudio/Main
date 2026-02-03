@@ -1,1 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneGuy Studio - Apps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Montserrat:wght@700;900&display=swap');
+        
+        body {
+            background-color: #050505;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .app-card {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            transition: all 0.3s ease;
+        }
+        
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.15);
+            border-color: #38bdf8;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-8">
 
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-12 max-w-6xl mx-auto">
+        <div>
+            <h1 class="text-4xl font-bold text-slate-200">ONEGUY <span class="text-sky-400">APPS</span></h1>
+            <p class="text-slate-500 font-mono mt-2">Experimental & Production Builds</p>
+        </div>
+        <!-- Back Button -->
+        <a href="../index.html" class="group flex items-center gap-2 px-6 py-3 bg-slate-800 rounded-lg hover:bg-slate-700 transition">
+            <svg class="w-5 h-5 fill-slate-400 group-hover:fill-white transition" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20v-2z"/></svg>
+            <span class="font-mono text-slate-400 group-hover:text-white transition">Back to Studio</span>
+        </a>
+    </header>
+
+    <!-- Apps Grid -->
+    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+
+        <!-- App 1: Placeholder -->
+        <article class="app-card p-6 rounded-2xl border border-slate-700 flex flex-col h-full">
+            <div class="h-40 bg-slate-900 rounded-xl mb-4 flex items-center justify-center relative overflow-hidden group">
+                <!-- Icon Placeholder -->
+                <svg class="w-16 h-16 text-slate-600 group-hover:text-sky-400 transition duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+            </div>
+            <h2 class="text-2xl font-bold mb-2">Project Alpha</h2>
+            <p class="text-slate-400 text-sm flex-grow mb-4">A powerful utility tool designed to optimize workflow and enhance productivity using AI.</p>
+            <div class="flex gap-2 mt-auto">
+                <span class="px-3 py-1 bg-sky-900/30 text-sky-400 text-xs rounded-full font-mono">React</span>
+                <span class="px-3 py-1 bg-purple-900/30 text-purple-400 text-xs rounded-full font-mono">Node.js</span>
+            </div>
+            <button class="w-full mt-6 py-3 rounded-lg bg-slate-800 hover:bg-sky-600 hover:text-white transition font-bold text-sm tracking-wide">LAUNCH APP</button>
+        </article>
+
+        <!-- App 2: Placeholder -->
+        <article class="app-card p-6 rounded-2xl border border-slate-700 flex flex-col h-full">
+            <div class="h-40 bg-slate-900 rounded-xl mb-4 flex items-center justify-center">
+                 <svg class="w-16 h-16 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+            </div>
+            <h2 class="text-2xl font-bold mb-2">Data Viz</h2>
+            <p class="text-slate-400 text-sm flex-grow mb-4">Interactive dashboard for visualizing complex datasets in real-time.</p>
+            <div class="flex gap-2 mt-auto">
+                <span class="px-3 py-1 bg-yellow-900/30 text-yellow-400 text-xs rounded-full font-mono">D3.js</span>
+            </div>
+            <button class="w-full mt-6 py-3 rounded-lg bg-slate-800 hover:bg-sky-600 hover:text-white transition font-bold text-sm tracking-wide">VIEW DEMO</button>
+        </article>
+
+        <!-- App 3: Coming Soon -->
+        <article class="p-6 rounded-2xl border border-dashed border-slate-800 flex flex-col items-center justify-center h-full opacity-50">
+            <p class="font-mono text-slate-500 mb-2">More Coming Soon...</p>
+            <div class="w-12 h-1 bg-slate-800 rounded"></div>
+        </article>
+
+    </main>
+
+    <footer class="text-center mt-20 text-slate-600 font-mono text-xs">
+        © 2026 OneGuyStudio. All Rights Reserved.
+    </footer>
+
+</body>
+</html>
