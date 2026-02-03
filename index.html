@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- Updated Viewport for Mobile App feel -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OneGuyStudio - Pro Simulation</title>
     
-    <!-- GSAP Libraries for Animation -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
 
     <style>
-        /* Import Retro/Coding Fonts */
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Permanent+Marker&family=Montserrat:wght@700;900&display=swap');
 
-        /* --- Global Reset & Scene Setup --- */
+        /* --- Global Reset & Scene --- */
         body {
             background-color: #050505;
             color: white;
@@ -28,21 +27,21 @@
             align-items: center;
             margin: 0;
             user-select: none;
-            touch-action: none; /* Disables scrolling on mobile touches */
+            touch-action: none; /* Prevents scrolling on mobile */
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* The Main Stage (Scaled dynamically) */
         #scene-container {
             width: 1000px;
             height: 650px;
             position: relative;
             transform-origin: center center;
             overflow: hidden; 
+            /* Ensure smooth scaling on mobile */
             will-change: transform;
         }
 
-        /* --- Mobile Rotate Message (Portrait Only) --- */
+        /* --- Rotate Device Message (Mobile Portrait) --- */
         #rotate-message {
             display: none;
             position: fixed;
@@ -57,7 +56,7 @@
         }
         #rotate-message svg { width: 64px; height: 64px; fill: #38bdf8; margin-bottom: 20px; animation: rotatePhone 2s infinite; }
         #rotate-message h2 { font-size: 1.5rem; color: #fff; margin-bottom: 10px; }
-        #rotate-message p { color: #94a3b8; font-family: 'Fira Code', monospace; font-size: 0.9rem; direction: rtl; }
+        #rotate-message p { color: #94a3b8; font-family: 'Fira Code', monospace; font-size: 0.9rem; }
 
         @keyframes rotatePhone {
             0%, 10% { transform: rotate(0deg); }
@@ -65,10 +64,10 @@
             90%, 100% { transform: rotate(0deg); }
         }
 
-        /* Trigger for Mobile Portrait */
+        /* Show rotate message only on portrait mobile devices */
         @media (max-width: 900px) and (orientation: portrait) {
             #rotate-message { display: flex; }
-            #scene-container { display: none; } 
+            #scene-container { display: none; } /* Hide scene to save resources/confusion */
         }
 
         /* --- Lighting Layer --- */
@@ -84,7 +83,7 @@
         body.lights-on { background: #1e293b; } 
         body.lights-on #darkness-layer { opacity: 0; }
 
-        /* --- Wall Layer (Fades in/out) --- */
+        /* --- Wall (Everything here fades in/out with light) --- */
         #wall-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1; opacity: 0.15; transition: opacity 1s;
@@ -106,7 +105,7 @@
         .min-hand { width: 2px; height: 35px; bottom: 50%; background: #cbd5e1; }
         .sec-hand { width: 1px; height: 40px; bottom: 50%; background: #ef4444; }
 
-        /* --- Frame Styles --- */
+        /* General Frame Style */
         .wall-frame {
             width: 100px; height: 100px; 
             border: 2px solid #334155; 
@@ -121,63 +120,57 @@
         .wall-frame svg { width: 40px; height: 40px; stroke: #64748b; transition: 0.3s; fill: none; }
         .wall-frame span { font-size: 0.7rem; color: #64748b; margin-top: 5px; font-weight: 600; transition: 0.3s; }
         
-        /* Fix for filled icons (Discord/GitHub) to appear Grey initially */
+        /* Specific rule for filled icons to ensure they are visible in grey */
         .wall-frame .filled-icon { stroke: none !important; fill: #64748b !important; transition: 0.3s; }
 
-        /* Interaction enabled when lights on */
+        /* Interaction when lights on */
         body.lights-on .wall-frame { pointer-events: auto; background: rgba(30, 41, 59, 1); }
 
-        /* Right Frames (Apps/Games) */
+        /* Standard Frames Hover (Right side) */
         .frames-group { position: absolute; top: 180px; right: 100px; display: flex; gap: 20px; }
         body.lights-on .frames-group .wall-frame:hover { transform: translateY(-5px); border-color: #38bdf8; }
         body.lights-on .frames-group .wall-frame:hover svg { stroke: #38bdf8; }
         body.lights-on .frames-group .wall-frame:hover span { color: #38bdf8; }
 
-        /* Left Frames (Community) */
-        .left-frames { position: absolute; top: 180px; left: 50px; display: flex; flex-direction: row; gap: 20px; }
+        /* Left Frames (Community/GitHub) */
+        .left-frames {
+            position: absolute; top: 180px; left: 50px; 
+            display: flex; flex-direction: row; gap: 20px; 
+        }
 
-        /* Discord Colors */
-        body.lights-on .discord-frame:hover { transform: translateY(-5px); border-color: #5865F2; background: rgba(88, 101, 242, 0.15); box-shadow: 0 0 20px rgba(88, 101, 242, 0.4); }
+        /* Discord Style */
+        body.lights-on .discord-frame:hover {
+            transform: translateY(-5px);
+            border-color: #5865F2; 
+            background: rgba(88, 101, 242, 0.15);
+            box-shadow: 0 0 20px rgba(88, 101, 242, 0.4);
+        }
         body.lights-on .discord-frame:hover .filled-icon { fill: #5865F2 !important; }
         body.lights-on .discord-frame:hover span { color: #5865F2; }
 
-        /* GitHub Colors */
-        body.lights-on .github-frame:hover { transform: translateY(-5px); border-color: #ffffff; background: rgba(255, 255, 255, 0.1); box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
+        /* GitHub Style */
+        body.lights-on .github-frame:hover {
+            transform: translateY(-5px);
+            border-color: #ffffff; 
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
         body.lights-on .github-frame:hover .filled-icon { fill: #ffffff !important; }
         body.lights-on .github-frame:hover span { color: #ffffff; }
 
-        .copyright { position: absolute; bottom: 20px; width: 100%; text-align: center; font-family: 'Fira Code', monospace; font-size: 0.8rem; color: #475569; letter-spacing: 1px; pointer-events: none; }
+        /* Copyright Footer */
+        .copyright {
+            position: absolute; bottom: 20px; width: 100%; text-align: center;
+            font-family: 'Fira Code', monospace; font-size: 0.8rem; color: #475569; letter-spacing: 1px; pointer-events: none;
+        }
 
-        /* --- Structure & Furniture --- */
-        .floor { position: absolute; bottom: 80px; width: 100%; height: 2px; background: #94a3b8; z-index: 5; opacity: 0.5; }
-        .side-wall { position: absolute; top: 0; bottom: 80px; width: 40px; background: #0f172a; z-index: 10; border-right: 1px solid #334155; }
-        .wall-left { left: 0; border-right: 2px solid #334155; }
-        .wall-right { right: 0; border-left: 2px solid #334155; border-right: none; }
-
-        /* Desk Area */
-        #workspace { position: absolute; bottom: 82px; right: 260px; width: 80px; height: 200px; z-index: 10; }
-        .desk-leg { position: absolute; bottom: 0; width: 6px; height: 95px; background: #334155; }
-        .leg-left { left: 8px; }
-        .leg-right { right: 8px; }
-        .desk-top { position: absolute; bottom: 95px; left: 0; width: 100%; height: 8px; background: #78350f; border-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 2; }
-        
-        .desk-light-strip { position: absolute; bottom: 93px; left: 10px; width: 60px; height: 2px; background: #0ea5e9; box-shadow: 0 5px 15px 2px rgba(14, 165, 233, 0.8); border-radius: 2px; opacity: 0.6; z-index: 105; transition: opacity 0.5s, box-shadow 0.5s; }
-        body.lights-on .desk-light-strip { opacity: 0.9; box-shadow: 0 5px 25px 4px rgba(56, 189, 248, 0.9); }
-        
-        .keyboard { position: absolute; bottom: 103px; left: 10px; width: 35px; height: 3px; background: #94a3b8; border-radius: 1px; opacity: 0.8; }
-        .monitor-stand { position: absolute; bottom: 103px; right: 15px; width: 10px; height: 18px; background: linear-gradient(to right, #1e293b, #334155); clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); }
-        .monitor { position: absolute; bottom: 118px; right: 8px; width: 6px; height: 75px; background: #0f172a; transform: rotate(-2deg); border-radius: 2px; z-index: 105; }
-        
-        .screen-glow { position: absolute; top: 2px; left: -3px; width: 3px; height: 71px; background: #0ea5e9; transition: 0.5s; box-shadow: -15px 0 30px rgba(14, 165, 233, 0.6); z-index: 106; }
-        body.lights-on .screen-glow { background: #38bdf8; box-shadow: -30px 0 60px rgba(56, 189, 248, 0.9); }
-
-        .monitor-beam { position: absolute; bottom: 125px; right: 220px; width: 140px; height: 140px; background: radial-gradient(circle at left center, rgba(14, 165, 233, 0.3), transparent 70%); transform: rotate(-10deg); z-index: 101; pointer-events: none; opacity: 0.4; filter: blur(8px); transition: opacity 0.8s, background 0.8s; mix-blend-mode: screen; }
-        body.lights-on .monitor-beam { opacity: 0.7; background: radial-gradient(circle at left center, rgba(56, 189, 248, 0.5), transparent 75%); }
-
-        /* --- Ceiling & Rope --- */
+        /* --- Ceiling Rig --- */
         #ceiling-rig { position: absolute; top: -100px; left: 50%; transform: translateX(-50%); z-index: 50; }
         .rig-rod { width: 4px; height: 120px; background: #333; margin: 0 auto; }
-        .fan-hub { position: relative; width: 50px; height: 40px; background: #222; margin: -5px auto 0; border-radius: 4px; z-index: 2; display: flex; justify-content: center; align-items: flex-end; }
+        .fan-hub {
+            position: relative; width: 50px; height: 40px; background: #222; margin: -5px auto 0;
+            border-radius: 4px; z-index: 2; display: flex; justify-content: center; align-items: flex-end;
+        }
         .light-bulb { width: 30px; height: 15px; background: #fff; border-radius: 0 0 15px 15px; opacity: 0.2; transition: opacity 0.2s; }
         .light-cone {
             position: absolute; top: 35px; left: -275px; width: 600px; height: 520px;
@@ -187,13 +180,39 @@
         body.lights-on .light-bulb { opacity: 1; box-shadow: 0 0 30px white; background: #fffbeb; }
         body.lights-on .light-cone { animation: flickerOn 0.4s forwards; }
         .fan-blade { position: absolute; top: 15px; left: -75px; width: 200px; height: 4px; background: #111; border-radius: 2px; z-index: 1; }
+
         #rope-container { position: absolute; top: 140px; left: -12px; width: 100px; height: 400px; z-index: 60; overflow: visible; }
         #pull-knob { cursor: grab; fill: #ef4444; stroke: #fff; stroke-width: 2; transition: fill 0.2s; }
         #pull-knob:active { cursor: grabbing; fill: #dc2626; }
 
+        /* --- Furniture --- */
+        .floor { position: absolute; bottom: 80px; width: 100%; height: 2px; background: #94a3b8; z-index: 5; opacity: 0.5; }
+
+        .side-wall { position: absolute; top: 0; bottom: 80px; width: 40px; background: #0f172a; z-index: 10; border-right: 1px solid #334155; }
+        .wall-left { left: 0; border-right: 2px solid #334155; }
+        .wall-right { right: 0; border-left: 2px solid #334155; border-right: none; }
+
+        /* Compact Desk */
+        #workspace { position: absolute; bottom: 82px; right: 260px; width: 80px; height: 200px; z-index: 10; }
+        .desk-leg { position: absolute; bottom: 0; width: 6px; height: 95px; background: #334155; }
+        .leg-left { left: 8px; }
+        .leg-right { right: 8px; }
+        .desk-top { position: absolute; bottom: 95px; left: 0; width: 100%; height: 8px; background: #78350f; border-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 2; }
+        .desk-light-strip { position: absolute; bottom: 93px; left: 10px; width: 60px; height: 2px; background: #0ea5e9; box-shadow: 0 5px 15px 2px rgba(14, 165, 233, 0.8); border-radius: 2px; opacity: 0.6; z-index: 105; transition: opacity 0.5s, box-shadow 0.5s; }
+        body.lights-on .desk-light-strip { opacity: 0.9; box-shadow: 0 5px 25px 4px rgba(56, 189, 248, 0.9); }
+        .keyboard { position: absolute; bottom: 103px; left: 10px; width: 35px; height: 3px; background: #94a3b8; border-radius: 1px; opacity: 0.8; }
+        .monitor-stand { position: absolute; bottom: 103px; right: 15px; width: 10px; height: 18px; background: linear-gradient(to right, #1e293b, #334155); clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); }
+        .monitor { position: absolute; bottom: 118px; right: 8px; width: 6px; height: 75px; background: #0f172a; transform: rotate(-2deg); border-radius: 2px; z-index: 105; }
+        .screen-glow { position: absolute; top: 2px; left: -3px; width: 3px; height: 71px; background: #0ea5e9; transition: 0.5s; box-shadow: -15px 0 30px rgba(14, 165, 233, 0.6); z-index: 106; }
+        body.lights-on .screen-glow { background: #38bdf8; box-shadow: -30px 0 60px rgba(56, 189, 248, 0.9); }
+
+        .monitor-beam { position: absolute; bottom: 125px; right: 220px; width: 140px; height: 140px; background: radial-gradient(circle at left center, rgba(14, 165, 233, 0.3), transparent 70%); transform: rotate(-10deg); z-index: 101; pointer-events: none; opacity: 0.4; filter: blur(8px); transition: opacity 0.8s, background 0.8s; mix-blend-mode: screen; }
+        body.lights-on .monitor-beam { opacity: 0.7; background: radial-gradient(circle at left center, rgba(56, 189, 248, 0.5), transparent 75%); }
+
         /* Character Rig */
         #char-wrapper { position: absolute; bottom: 82px; right: 220px; width: 240px; height: 240px; z-index: 20; overflow: visible; }
         .zzz-text { font-family: 'Fira Code', monospace; fill: #94a3b8; font-weight: bold; opacity: 0; }
+
         @keyframes flickerOn { 0% { opacity: 0; } 100% { opacity: 1; } }
     </style>
 </head>
@@ -265,6 +284,7 @@
                 </div>
             </div>
 
+            <!-- COPYRIGHT FOOTER -->
             <div class="copyright">© 2026 OneGuyStudio</div>
         </div>
 
@@ -315,8 +335,8 @@
             <g id="chair">
                 <rect x="50" y="90" width="8" height="55" rx="2" fill="#334155" /> 
                 <rect x="50" y="135" width="55" height="8" rx="2" fill="#475569" /> 
-                <rect x="75" y="143" width="6" height="52" fill="#0f172a" /> <!-- Darker legs for contrast -->
-                <rect x="60" y="195" width="40" height="5" rx="2" fill="#0f172a" /> <!-- Darker base -->
+                <rect x="75" y="143" width="6" height="52" fill="#0f172a" /> 
+                <rect x="60" y="195" width="40" height="5" rx="2" fill="#0f172a" /> 
                 <circle cx="65" cy="203" r="3" fill="#0f172a" />
                 <circle cx="95" cy="203" r="3" fill="#0f172a" />
             </g>
@@ -376,17 +396,23 @@
         gsap.to("#cat", { y: -1, scaleY: 1.05, duration: 2, repeat: -1, yoyo: true, ease: "sine.inOut" });
 
         window.addEventListener("mousemove", e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-        window.addEventListener("orientationchange", () => setTimeout(resize, 100));
-
+        
         gsap.ticker.add(() => {
             if(!isLightsOn) {
+                // Flashlight logic relative to mouse position
                 lightPos.x += (mouse.x - lightPos.x) * 0.1;
                 lightPos.y += (mouse.y - lightPos.y) * 0.1;
+                
                 const rect = container.getBoundingClientRect();
+                
+                // Map global mouse position to scaled container coordinates
                 let localX = (lightPos.x - rect.left) / currentScale;
                 let localY = (lightPos.y - rect.top) / currentScale;
+
+                // Clamp values to stay within container 0-100%
                 const xPct = (localX / 1000) * 100;
                 const yPct = (localY / 650) * 100;
+
                 darkness.style.setProperty("--x", `${xPct}%`);
                 darkness.style.setProperty("--y", `${yPct}%`);
             }
@@ -452,14 +478,25 @@
             gsap.killTweensOf("#arm-back");
         }
         
+        // Blink Animation Function
         function blink() {
             if (!isLightsOn) return;
+            
             gsap.to("#eye-open", {
-                scaleY: 0.1, duration: 0.15, yoyo: true, repeat: 1, transformOrigin: "center",
-                onComplete: () => { if (isLightsOn) gsap.delayedCall(Math.random() * 3 + 2, blink); }
+                scaleY: 0.1,
+                duration: 0.15,
+                yoyo: true,
+                repeat: 1,
+                transformOrigin: "center",
+                onComplete: () => {
+                    if (isLightsOn) {
+                        gsap.delayedCall(Math.random() * 3 + 2, blink);
+                    }
+                }
             });
         }
 
+        // --- Periodic Sip Routine ---
         function sipRoutine() {
             if (!isLightsOn || isSipping) return; 
             isSipping = true;
@@ -511,6 +548,7 @@
                     isTransitioning = false;
                     startTyping(); 
                     coffeeTimer = setInterval(sipRoutine, 15000);
+                    // Start Blinking Loop
                     gsap.delayedCall(2, blink);
                 }});
 
