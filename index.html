@@ -265,13 +265,14 @@
             </div>
             
             <div class="frames-group">
-                <div class="wall-frame">
+                <!-- MODIFIED: Changed APPS from div to anchor link -->
+                <a href="apps/index.html" class="wall-frame">
                     <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
                         <line x1="12" y1="18" x2="12.01" y2="18"></line>
                     </svg>
                     <span>APPS</span>
-                </div>
+                </a>
                 <div class="wall-frame">
                     <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 12a4.9 4.9 0 0 0-5-5H8a4.9 4.9 0 0 0-5 5v3a2 2 0 0 0 4 0l1-2h8l1 2a2 2 0 0 0 4 0v-3z"></path>
@@ -396,7 +397,8 @@
         gsap.to("#cat", { y: -1, scaleY: 1.05, duration: 2, repeat: -1, yoyo: true, ease: "sine.inOut" });
 
         window.addEventListener("mousemove", e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-        
+        window.addEventListener("orientationchange", () => setTimeout(resize, 100));
+
         gsap.ticker.add(() => {
             if(!isLightsOn) {
                 // Flashlight logic relative to mouse position
